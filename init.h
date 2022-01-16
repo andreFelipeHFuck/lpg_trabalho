@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio_ext.h>
+#include <time.h>
 
 typedef struct
 {
@@ -21,9 +22,9 @@ typedef struct
     char descricao[500];
 }Evento;
 
-
 typedef struct 
 {
     int n_eventos;
     Evento *eventos;
 }Agenda;
+

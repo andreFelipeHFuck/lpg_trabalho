@@ -45,8 +45,45 @@ void escreverArquivo(Agenda *agenda){
     fclose(arq);
 }
 
+// Filtro
+
+int filtro(int limite, char erro[100], char mensagem[50]){
+    int num;
+    while (1)
+    {
+        printf("%s", mensagem);
+        scanf("%d", &num);
+
+        if(num > limite && num >= 0){
+            printf("%s", erro);
+        }else{
+            break;
+        }
+    }
+    return num;
+}
+
+int opcaoInsereEvento(){
+    int resp;
+    while(1){
+        printf("Deseja registrar um novo evento?\n");
+        printf("1 - Sim\n");
+        printf("2 - Nao\n");
+        scanf("%d", &resp);
+        if((resp == 1) || (resp == 2)){
+            break;
+        }
+    }
+    return resp;
+}
+
 void insereEvento(Agenda *agenda){
     system("clear");
+
+    time_t mytime;
+    mytime = time(NULL);
+    struct tm tm = *localtime(&mytime);
+    
     int resp;
 
     agenda->eventos = (Evento*) realloc(agenda->eventos, (agenda->n_eventos + 1) * sizeof(Evento));
@@ -56,52 +93,45 @@ void insereEvento(Agenda *agenda){
     }else{
         // Local e descrição
         printf("Local: ");
-        scanf("%s", agenda->eventos[agenda->n_eventos].local);
+        __fpurge(stdin);
+        fgets(agenda->eventos[agenda->n_eventos].local, 100, stdin);
 
         printf("Descrição: ");
-        scanf("%s", agenda->eventos[agenda->n_eventos].descricao);
+        __fpurge(stdin);
+        fgets(agenda->eventos[agenda->n_eventos].local, 500, stdin);
         
         // Data
         printf("Data \n");
-        printf("Dia: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].data.dia);
-        printf("Mês: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].data.mes);
-        printf("Ano: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].data.ano);
+
+        agenda->eventos[agenda->n_eventos].data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
+
+        agenda->eventos[agenda->n_eventos].data.mes = filtro(12, "Erro, digite um número de 1 a 12\n", "Mes: ");
+
+        agenda->eventos[agenda->n_eventos].data.ano = filtro(tm.tm_year + 1900, "Erro, não é possível marcar um evento num ano que já passou.", "Ano: ");
 
         // Horário de ínicio
         printf("Horario de ínico\n");
-        printf("Hora: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].inicio.hora);
-        printf("Minuto: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].inicio.minuto);
+
+        agenda->eventos[agenda->n_eventos].inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+       
+        agenda->eventos[agenda->n_eventos].inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
         // Horário de fim
         printf("Horirio de fim\n");
-        printf("Hora: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].fim.hora);
-        printf("Minuto: ");
-        scanf("%d", &agenda->eventos[agenda->n_eventos].fim.minuto);
+      
+        agenda->eventos[agenda->n_eventos].fim.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+       
+        agenda->eventos[agenda->n_eventos].fim.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
         printf("\n");
         agenda->n_eventos++;
     }
 
-     while (1)
-        {
-            printf("Deseja registrar um novo evento?\n");
-            printf("1 - Sim\n");
-            printf("2 - Nao\n");
-            scanf("%d", &resp);
-            if((resp == 1) || (resp == 2)){
-                break;
-            }
-            
-        }
-        if(resp == 1){
-            insereEvento(agenda);
-        }
+    resp = opcaoInsereEvento();
+
+    if(resp == 1){
+        insereEvento(agenda);
+    }
 
 }
 
