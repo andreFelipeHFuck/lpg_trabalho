@@ -110,7 +110,8 @@ int opcaoInsereEvento(){
 void insereEvento(Agenda *agenda, Data data){
     system("clear");
 
-    int resp;
+    int resp, i, cont;
+    char local[100];
 
     agenda->eventos = (Evento*) realloc(agenda->eventos, (agenda->n_eventos + 1) * sizeof(Evento));
 
@@ -118,9 +119,28 @@ void insereEvento(Agenda *agenda, Data data){
         printf("Não foi possivel aumentar o vetor de eventos");
     }else{
         // Local e descrição
-        printf("Local: ");
-        __fpurge(stdin);
-        fgets(agenda->eventos[agenda->n_eventos].local, 100, stdin);
+
+        // Filtro local
+        while (1)
+        {
+            printf("Local: ");
+            __fpurge(stdin);
+            fgets(local, 100, stdin);
+
+            for(i = 0; i < agenda->n_eventos; i++){
+                if(strcmp(agenda->eventos[i].local, local) == 0){
+                    printf("Erro! Esse local já possui um evento marcado!\n");
+                }else{
+                    cont++;
+                }
+                if(cont > 0){
+                    strcpy(agenda->eventos[agenda->n_eventos].local, local);
+                    break;
+                }
+                cont = 0;
+            }
+        }
+        
 
         printf("Descrição: ");
         __fpurge(stdin);
