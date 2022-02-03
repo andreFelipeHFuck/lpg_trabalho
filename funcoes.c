@@ -11,6 +11,22 @@ void menu(int *opt){
     scanf("%d", opt);
 }
 
+int dataIgual(Data dataEventos, Data dataAtual){
+    if(dataEventos.ano == dataAtual.ano && dataEventos.mes == dataAtual.mes && dataEventos.dia == dataAtual.dia){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int horarioIgual(Hora horaEvento, Hora inputHora){
+    if(horaEvento.hora == inputHora.hora && horaEvento.minuto == inputHora.minuto){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
 Agenda* iniciarAgenda(){
     Agenda *agenda = (Agenda*) malloc(sizeof(Agenda));
     FILE *arq = fopen("agenda", "rb");
@@ -159,10 +175,12 @@ void ordenarPorData(Agenda *agenda){
 
 }
 
-void insereEvento(Agenda *agenda, Data data){
+void insereEvento(Agenda *agenda, Data dataAtual){
     system("clear");
 
-    int resp, i, cont;
+    int i, cont;
+    Hora inicio;
+    Data data;
     char finalizar[10];
 
     agenda->eventos = (Evento*) realloc(agenda->eventos, (agenda->n_eventos + 1) * sizeof(Evento));
@@ -171,8 +189,6 @@ void insereEvento(Agenda *agenda, Data data){
         printf("Não foi possivel aumentar o vetor de eventos");
     }else{
         // Local e descrição
-
-        // Filtro local
         printf("Local: ");
          __fpurge(stdin);
         fgets(agenda->eventos[agenda->n_eventos].local, 100, stdin);
@@ -184,19 +200,37 @@ void insereEvento(Agenda *agenda, Data data){
         // Data
         printf("Data \n");
 
-        agenda->eventos[agenda->n_eventos].data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
+        data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
 
-        agenda->eventos[agenda->n_eventos].data.mes = filtro(12, "Erro, digite um número de 1 a 12\n", "Mes: ");
+        data.mes = filtro(12, "Erro, digite um número de 1 a 12\n", "Mes: ");
 
-        agenda->eventos[agenda->n_eventos].data.ano = filtroAno(data.ano - 1, "Erro, não é possível marcar um evento num ano que já passou.\n", "Ano: ");
+        data.ano = filtroAno(dataAtual.ano, "Erro, não é possível marcar um evento num ano que já passou.\n", "Ano: ");
 
-        // Horário de ínicio
+        // Horário inicial
+
+        // Verificando se tem algum evento com a mesma data e horario de ínicio
         printf("Horario de ínico\n");
+        while (1)
+        {
+            cont = 0;
+            inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+            inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
-        agenda->eventos[agenda->n_eventos].inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
-       
-        agenda->eventos[agenda->n_eventos].inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
+            for(i = 0; i < agenda->n_eventos; i++){
+                if(dataIgual(data, agenda->eventos[i].data) == 1 && horarioIgual(inicio, agenda->eventos[i].inicio) == 1){
+                    printf("Horario invalido, já existe um evento cadastrado nessa data e com esse horario\n");
+                    printf("Por favor digite outro horario\n");
+                    cont++;
+                }
+            }
 
+            if(cont == 0){
+                agenda->eventos[agenda->n_eventos].inicio = inicio;
+                agenda->eventos[agenda->n_eventos].data = data;
+                break;
+            }
+        }
+        
         // Horário de fim
         printf("Horario de fim\n");
       
@@ -253,7 +287,7 @@ void mostrarEventos(Agenda *agenda){
             if(agenda->eventos[i].fim.minuto == 0){
                 printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
             }else{
-                printf("Horário de ínicio: %d: %d\n",
+                printf("Horário de final: %d: %d\n",
                                                 agenda->eventos[i].fim.hora,
                                                 agenda->eventos[i].fim.minuto
                 );
@@ -267,22 +301,6 @@ void mostrarEventos(Agenda *agenda){
     printf("\nAperte qualquer botão para sair: ");
     __fpurge(stdin);
     fgets(finalizar, 10, stdin);
-}
-
-int dataIgual(Data dataEventos, Data dataAtual){
-    if(dataEventos.ano == dataAtual.ano && dataEventos.mes == dataAtual.mes && dataEventos.dia == dataAtual.dia){
-        return 1;
-    }else{
-        return 0;
-    }
-}
-
-int horarioIgual(Hora horaEvento, Hora inputHora){
-    if(horaEvento.hora == inputHora.hora && horaEvento.minuto == inputHora.minuto){
-        return 1;
-    }else{
-        return 0;
-    }
 }
 
 void mostrarEventosPorData(Agenda *agenda){
