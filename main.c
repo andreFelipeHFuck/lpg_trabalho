@@ -22,7 +22,7 @@ int main(){
         {
         case 1:
             insereEvento(agenda, data);
-            escreverArquivo(agenda);
+            ordenarPorData(agenda);
             break;
         
         case 2:
@@ -38,8 +38,7 @@ int main(){
             break;    
 
         case 5:
-            excluirEvento(agenda);
-            escreverArquivo(agenda);
+            removerEvento(agenda);
             break;
 
         case 0:

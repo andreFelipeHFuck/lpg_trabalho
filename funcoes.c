@@ -93,25 +93,77 @@ int filtroHorario(int final, int limite, char erro[100], char mensagem[50]){
     return num;
 }
 
-int opcaoInsereEvento(){
-    int resp;
-    while(1){
-        printf("Deseja registrar um novo evento?\n");
-        printf("1 - Sim\n");
-        printf("2 - Nao\n");
-        scanf("%d", &resp);
-        if((resp == 1) || (resp == 2)){
-            break;
+// Bubblesort para ordenar Agenda
+void ordenarPorData(Agenda *agenda){
+    int i, j;
+    Evento aux;
+    // Ordenar por horario inicial (minuto)
+    for(i = 1; i < agenda->n_eventos; i++){
+        for(j = 0; j < agenda->n_eventos - 1; j++){
+            if(agenda->eventos[j].inicio.minuto > agenda->eventos[j + 1].inicio.minuto){
+                aux = agenda->eventos[j];
+                agenda->eventos[j] = agenda->eventos[j + 1];
+                agenda->eventos[j + 1] = aux;
+            }    
         }
     }
-    return resp;
+
+    // Ordenar por horario inical (hora)
+    for(i = 1; i < agenda->n_eventos; i++){
+        for(j = 0; j < agenda->n_eventos - 1; j++){
+            if(agenda->eventos[j].inicio.hora > agenda->eventos[j + 1].inicio.hora){
+                aux = agenda->eventos[j];
+                agenda->eventos[j] = agenda->eventos[j + 1];
+                agenda->eventos[j + 1] = aux;
+            }    
+        }
+    }
+
+    // Ordenar por dia
+    for(i = 1; i < agenda->n_eventos; i++){
+        for(j = 0; j < agenda->n_eventos - 1; j++){
+            if(agenda->eventos[j].data.dia > agenda->eventos[j + 1].data.dia){
+                aux = agenda->eventos[j];
+                agenda->eventos[j] = agenda->eventos[j + 1];
+                agenda->eventos[j + 1] = aux;
+            }    
+        }
+    }
+
+    // Ordenar por mes
+    for(i = 1; i < agenda->n_eventos; i++){
+        for(j = 0; j < agenda->n_eventos - 1; j++){
+            if(agenda->eventos[j].data.mes > agenda->eventos[j + 1].data.mes){
+                aux = agenda->eventos[j];
+                agenda->eventos[j] = agenda->eventos[j + 1];
+                agenda->eventos[j + 1] = aux;
+            }    
+        }
+    }
+
+    // Ordenar por ano
+    for(i = 1; i < agenda->n_eventos; i++){
+        for(j = 0; j < agenda->n_eventos - 1; j++){
+            if(agenda->eventos[j].data.ano > agenda->eventos[j + 1].data.ano){
+                aux = agenda->eventos[j];
+                agenda->eventos[j] = agenda->eventos[j + 1];
+                agenda->eventos[j + 1] = aux;
+            }    
+        }
+    }
+
+    
+    for(i = 0; i < agenda->n_eventos; i++){
+        printf("%d/%d/%d hora: %d: %d\n", agenda->eventos[i].data.dia, agenda->eventos[i].data.mes, agenda->eventos[i].data.ano, agenda->eventos[i].inicio.hora, agenda->eventos[i].inicio.minuto);
+    }
+
 }
 
 void insereEvento(Agenda *agenda, Data data){
     system("clear");
 
     int resp, i, cont;
-    char local[100];
+    char finalizar[10];
 
     agenda->eventos = (Evento*) realloc(agenda->eventos, (agenda->n_eventos + 1) * sizeof(Evento));
 
@@ -121,27 +173,10 @@ void insereEvento(Agenda *agenda, Data data){
         // Local e descrição
 
         // Filtro local
-        while (1)
-        {
-            printf("Local: ");
-            __fpurge(stdin);
-            fgets(local, 100, stdin);
-
-            for(i = 0; i < agenda->n_eventos; i++){
-                if(strcmp(agenda->eventos[i].local, local) == 0){
-                    printf("Erro! Esse local já possui um evento marcado!\n");
-                }else{
-                    cont++;
-                }
-                if(cont > 0){
-                    strcpy(agenda->eventos[agenda->n_eventos].local, local);
-                    break;
-                }
-                cont = 0;
-            }
-        }
+        printf("Local: ");
+         __fpurge(stdin);
+        fgets(agenda->eventos[agenda->n_eventos].local, 100, stdin);
         
-
         printf("Descrição: ");
         __fpurge(stdin);
         fgets(agenda->eventos[agenda->n_eventos].descricao, 500, stdin);
@@ -163,21 +198,20 @@ void insereEvento(Agenda *agenda, Data data){
         agenda->eventos[agenda->n_eventos].inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
         // Horário de fim
-        printf("Horirio de fim\n");
+        printf("Horario de fim\n");
       
         agenda->eventos[agenda->n_eventos].fim.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
        
-        agenda->eventos[agenda->n_eventos].fim.minuto = filtroHorario(agenda->eventos[agenda->n_eventos].inicio.hora, 59, "Erro digite um número de 0 a 59\n", "Minuto: ");
+        agenda->eventos[agenda->n_eventos].fim.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
         printf("\n");
         agenda->n_eventos++;
+
     }
 
-    resp = opcaoInsereEvento();
-
-    if(resp == 1){
-        insereEvento(agenda, data);
-    }
+    printf("\nAperte qualquer botão para sair: ");
+    __fpurge(stdin);
+    fgets(finalizar, 10, stdin);
 
 }
 
@@ -205,15 +239,27 @@ void mostrarEventos(Agenda *agenda){
             );
 
             //Horário de ínicio e finalização
-            printf("Horário de ínicio: %d: %d\n",
+
+            // Se o minuto for zero
+            if(agenda->eventos[i].inicio.minuto == 0){
+                printf("Horário de ínicio: %d: 00\n",agenda->eventos[i].inicio.hora);    
+            }else{
+                printf("Horário de ínicio: %d: %d\n",
                                                 agenda->eventos[i].inicio.hora,
                                                 agenda->eventos[i].inicio.minuto
-            );
-            printf("Hórario de final: %d: %d\n",
-                                              agenda->eventos[i].fim.hora,
-                                              agenda->eventos[i].fim.minuto
-            );
+                );
+            }
 
+            if(agenda->eventos[i].fim.minuto == 0){
+                printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
+            }else{
+                printf("Horário de ínicio: %d: %d\n",
+                                                agenda->eventos[i].fim.hora,
+                                                agenda->eventos[i].fim.minuto
+                );
+            }
+            
+            
             printf("==========================================\n");
         }
     }
@@ -226,6 +272,16 @@ void mostrarEventos(Agenda *agenda){
 int dataIgual(Data dataEventos, Data dataAtual){
     if(dataEventos.ano == dataAtual.ano && dataEventos.mes == dataAtual.mes && dataEventos.dia == dataAtual.dia){
         return 1;
+    }else{
+        return 0;
+    }
+}
+
+int horarioIgual(Hora horaEvento, Hora inputHora){
+    if(horaEvento.hora == inputHora.hora && horaEvento.minuto == inputHora.minuto){
+        return 1;
+    }else{
+        return 0;
     }
 }
 
@@ -237,17 +293,16 @@ void mostrarEventosPorData(Agenda *agenda){
     Data data;
 
     printf("Entre com uma data\n");
-    printf("Dia: ");
     data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
-    printf("Mês: ");
     data.mes = filtro(12, "Erro, digite um número de 1 a 12\n", "Mes: ");
     printf("Ano: ");
-    data.ano = filtro(2022, "Erro, não é possível marcar um evento num ano que já passou.", "Ano: ");
+    scanf("%d", &data.ano);
 
+    system("clear");
     if(agenda->n_eventos == 0){
         printf("Nenhum evento encontrado...\n");
     }else{
-        printf("Eventos\n");
+        //printf("Eventos de %d/ %d/ %d\n", data.dia, data.mes, data.ano);
         for(i = 0; i < agenda->n_eventos; i++){
             if(dataIgual(agenda->eventos[i].data, data) == 1){
                 printf("==========================================\n");
@@ -256,15 +311,28 @@ void mostrarEventosPorData(Agenda *agenda){
                 printf("Descrição: %s", agenda->eventos[i].descricao);
 
                 //Horário de ínicio e finalização
-                printf("Horário de ínicio: %d: %d\n",
+
+                // Se o minuto for 0
+                if(agenda->eventos[i].inicio.minuto == 0){
+                    printf("Horário de ínicio: %d: 00\n",agenda->eventos[i].inicio.hora);   
+                }else{
+                    printf("Horário de ínicio: %d: %d\n",
                                                 agenda->eventos[i].inicio.hora,
                                                 agenda->eventos[i].inicio.minuto
-                 );
-                printf("Hórario de final: %d: %d\n",
+                    );
+                }
+
+                if(agenda->eventos[i].fim.minuto == 0){
+                        printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
+
+                }else{
+                    printf("Hórario de final: %d: %d\n",
                                               agenda->eventos[i].fim.hora,
                                               agenda->eventos[i].fim.minuto
-                );
+                     );
 
+                }
+                
                 printf("==========================================\n");
                 cont++;
             }
@@ -273,7 +341,7 @@ void mostrarEventosPorData(Agenda *agenda){
     }
 
     if(cont == 0){
-        printf("Nenhum evento encontrado...\n");
+        printf("Nenhum evento encontrado nessa data\n");
     }
 
     printf("\nAperte qualquer botão para sair: ");
@@ -299,14 +367,26 @@ void mostrarEventosCincoProximos(Agenda *agenda, Data data){
                 printf("Descrição: %s", agenda->eventos[i].descricao);
 
                 //Horário de ínicio e finalização
-                printf("Horário de ínicio: %d: %d\n",
+
+                //Se o minuto for 0
+
+                if(agenda->eventos[i].inicio.minuto == 0){
+                    printf("Horário de ínicio: %d: 00\n", agenda->eventos[i].inicio.hora);
+                }else{
+                     printf("Horário de ínicio: %d: %d\n",
                                                 agenda->eventos[i].inicio.hora,
                                                 agenda->eventos[i].inicio.minuto
-                 );
-                printf("Hórario de final: %d: %d\n",
+                    );
+                }
+               
+                if(agenda->eventos[i].fim.minuto == 0){
+                    printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
+                }else{
+                    printf("Hórario de final: %d: %d\n",
                                               agenda->eventos[i].fim.hora,
                                               agenda->eventos[i].fim.minuto
-                );
+                    );
+                }
 
                 printf("==========================================\n");
                 cont++;
@@ -325,19 +405,29 @@ void mostrarEventosCincoProximos(Agenda *agenda, Data data){
     
 }
 
-void excluirEvento(Agenda *agenda){
+void removerEvento(Agenda *agenda){
     system("clear");
 
     int i = 0, conta_excluido = 0;
-    char local[100], finalizar[10];
+    char finalizar[10];
+    Data data;
+    Hora inicio;
 
-    printf("Entre com o local do evento a ser removido: \n");
-    printf("Local: ");
-    __fpurge(stdin);
-    fgets(local, 100, stdin);
+    printf("Entre com o data do evento e o horario inical para removela: \n");
+    printf("Data:\n");
+    
+    data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
+    data.mes = filtro(12, "Erro, digite um número de 1 a 12\n", "Mes: ");
+    printf("Ano: ");
+    scanf("%d", &data.ano);
+
+    printf("Horario inicial:\n");
+    inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+    inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
+
 
     while(i < agenda->n_eventos){
-        if(strcmp(agenda->eventos[i].local, local) == 0){
+        if(dataIgual(agenda->eventos[i].data, data) == 1 && horarioIgual(agenda->eventos[i].inicio, inicio) == 1){
             conta_excluido++;
             agenda->eventos[i] = agenda->eventos[agenda->n_eventos - 1];
             agenda->eventos = (Evento*) realloc(agenda->eventos, (agenda->n_eventos - 1) * sizeof(Evento));
