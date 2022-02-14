@@ -19,7 +19,7 @@ typedef struct
     Data data;
     Hora inicio, fim;
     char local[100];
-    char descricao[500];
+    char descricao[1000];
 }Evento;
 
 typedef struct 

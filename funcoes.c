@@ -231,16 +231,16 @@ void insereEvento(Agenda *agenda, Data dataAtual){
             }
         }
         
-        // Horário de fim
+        // Horário final
         printf("Horario de fim\n");
       
         agenda->eventos[agenda->n_eventos].fim.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
        
         agenda->eventos[agenda->n_eventos].fim.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
-        printf("\n");
         agenda->n_eventos++;
 
+        printf("Evento incluído\n");
     }
 
     printf("\nAperte qualquer botão para sair: ");
@@ -295,6 +295,7 @@ void mostrarEventos(Agenda *agenda){
             
             
             printf("==========================================\n");
+            printf("\n");
         }
     }
 
@@ -431,7 +432,7 @@ void removerEvento(Agenda *agenda){
     Data data;
     Hora inicio;
 
-    printf("Entre com o data do evento e o horario inical para removela: \n");
+    printf("Entre com o data do evento e o horario inical para removel: \n");
     printf("Data:\n");
     
     data.dia = filtro(31, "Erro, digite um número de 1 a 31\n", "Dia: ");
@@ -465,4 +466,3 @@ void removerEvento(Agenda *agenda){
     fgets(finalizar, 10, stdin);
 
 }
-

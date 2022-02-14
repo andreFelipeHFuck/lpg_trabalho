@@ -2,26 +2,26 @@
 #include "funcoes.c"
 
 int main(){
-    //Evento *eventos;
     int opt;
 
+    // Pegando o dia, mes e ano do computador
     time_t mytime;
     mytime = time(NULL);
     struct tm tm = *localtime(&mytime);
 
     Agenda *agenda = iniciarAgenda();
-    Data data;
+    Data dataAtual;
 
-    data.dia = tm.tm_mday;
-    data.mes = tm.tm_mon + 1;
-    data.ano = tm.tm_year + 1900;
+    dataAtual.dia = tm.tm_mday;
+    dataAtual.mes = tm.tm_mon + 1;
+    dataAtual.ano = tm.tm_year + 1900;
    
     do{
         menu(&opt);
         switch (opt)
         {
         case 1:
-            insereEvento(agenda, data);
+            insereEvento(agenda, dataAtual);
             ordenarPorData(agenda);
             break;
         
@@ -34,7 +34,7 @@ int main(){
             break;
 
         case 4:
-            mostrarEventosCincoProximos(agenda, data);
+            mostrarEventosCincoProximos(agenda, dataAtual);
             break;    
 
         case 5:
