@@ -285,9 +285,9 @@ void mostrarEventos(Agenda *agenda){
             }
 
             if(agenda->eventos[i].fim.minuto == 0){
-                printf("Hórario de termino: %d: 00\n", agenda->eventos[i].fim.hora);
+                printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
             }else{
-                printf("Horário de termino: %d: %d\n",
+                printf("Horário de final: %d: %d\n",
                                                 agenda->eventos[i].fim.hora,
                                                 agenda->eventos[i].fim.minuto
                 );
@@ -342,10 +342,10 @@ void mostrarEventosPorData(Agenda *agenda){
                 }
 
                 if(agenda->eventos[i].fim.minuto == 0){
-                        printf("Hórario de termino: %d: 00\n", agenda->eventos[i].fim.hora);
+                        printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
 
                 }else{
-                    printf("Hórario de termino: %d: %d\n",
+                    printf("Hórario de final: %d: %d\n",
                                               agenda->eventos[i].fim.hora,
                                               agenda->eventos[i].fim.minuto
                      );
@@ -399,9 +399,9 @@ void mostrarEventosCincoProximos(Agenda *agenda, Data data){
                 }
                
                 if(agenda->eventos[i].fim.minuto == 0){
-                    printf("Hórario de termino: %d: 00\n", agenda->eventos[i].fim.hora);
+                    printf("Hórario de final: %d: 00\n", agenda->eventos[i].fim.hora);
                 }else{
-                    printf("Hórario de termino: %d: %d\n",
+                    printf("Hórario de final: %d: %d\n",
                                               agenda->eventos[i].fim.hora,
                                               agenda->eventos[i].fim.minuto
                     );
