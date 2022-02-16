@@ -29,23 +29,31 @@ int horarioIgual(Hora horaEvento, Hora inputHora){
 
 Agenda* iniciarAgenda(){
     Agenda *agenda = (Agenda*) malloc(sizeof(Agenda));
-    FILE *arq = fopen("agenda", "rb");
 
-    if(arq){
-        fread(&agenda->n_eventos, sizeof(int), 1, arq);
-        agenda->eventos = (Evento *) malloc (agenda->n_eventos * sizeof(Evento));
-
-        if(!agenda->eventos){
-            printf("Não fois possivel alocar vetor de eventos\n");
-        }else{
-            fread(agenda->eventos, sizeof(Evento), agenda->n_eventos, arq);
-            fclose(arq);
-        }
+    if(!agenda){
+        printf("Não foi possivel alocar o vetor agenda");
+        return 0;
     }else{
-        agenda->n_eventos = 0;
-        agenda->eventos = 0;
+        FILE *arq = fopen("agenda", "rb");
+
+        if(arq){
+            fread(&agenda->n_eventos, sizeof(int), 1, arq);
+            agenda->eventos = (Evento *) malloc (agenda->n_eventos * sizeof(Evento));
+
+            if(!agenda->eventos){
+                printf("Não foi possivel alocar vetor de eventos\n");
+            }else{
+                fread(agenda->eventos, sizeof(Evento), agenda->n_eventos, arq);
+                fclose(arq);
+            }
+        }else{
+            agenda->n_eventos = 0;
+            agenda->eventos = 0;
+        }
+        return agenda;
     }
-    return agenda;
+
+    
 }
 
 void escreverArquivo(Agenda *agenda){
@@ -195,7 +203,7 @@ void insereEvento(Agenda *agenda, Data dataAtual){
         
         printf("Descrição: ");
         __fpurge(stdin);
-        fgets(agenda->eventos[agenda->n_eventos].descricao, 500, stdin);
+        fgets(agenda->eventos[agenda->n_eventos].descricao, 1000, stdin);
         
         // Data
         printf("Data \n");
@@ -213,7 +221,7 @@ void insereEvento(Agenda *agenda, Data dataAtual){
         while (1)
         {
             cont = 0;
-            inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+            inicio.hora = filtro(23, "Erro, digite um número de 0 a 23\n", "Hora: ");
             inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
             for(i = 0; i < agenda->n_eventos; i++){
@@ -234,7 +242,7 @@ void insereEvento(Agenda *agenda, Data dataAtual){
         // Horário final
         printf("Horario de fim\n");
       
-        agenda->eventos[agenda->n_eventos].fim.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+        agenda->eventos[agenda->n_eventos].fim.hora = filtro(23, "Erro, digite um número de 0 a 23\n", "Hora: ");
        
         agenda->eventos[agenda->n_eventos].fim.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
@@ -441,7 +449,7 @@ void removerEvento(Agenda *agenda){
     scanf("%d", &data.ano);
 
     printf("Horario inicial:\n");
-    inicio.hora = filtro(24, "Erro, digite um número de 0 a 23\n", "Hora: ");
+    inicio.hora = filtro(23, "Erro, digite um número de 0 a 23\n", "Hora: ");
     inicio.minuto = filtro(59, "Erro digite um número de 0 a 59\n", "Minuto: ");
 
 
