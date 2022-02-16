@@ -31,7 +31,7 @@ Agenda* iniciarAgenda(){
     Agenda *agenda = (Agenda*) malloc(sizeof(Agenda));
 
     if(!agenda){
-        printf("Não foi possivel alocar o vetor agenda");
+        printf("Não foi possivel alocar a agenda");
         return 0;
     }else{
         FILE *arq = fopen("agenda", "rb");
